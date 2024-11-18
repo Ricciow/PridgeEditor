@@ -26,11 +26,14 @@ import {
     TextAspectConstraint
 } from "../../../Elementa";
 import { Color } from "../../constants";
+import formatSelector from "../formatEditor/formatSelector";
 
 const File = Java.type("java.io.File")
 
 export default class fileSelector {
-    constructor() {
+    constructor(guiHandler) {
+
+        this.guiHandler = guiHandler
         this.files = []
         this.fileButtons = []
 
@@ -78,7 +81,7 @@ export default class fileSelector {
         .setX(new CenterConstraint)
         .setY(new AdditiveConstraint(new SiblingConstraint, (5).pixels()))
         .setWidth(new SubtractiveConstraint((100).percent(), (10).pixels()))
-        .setHeight(new SubtractiveConstraint((100).percent(), (35).pixels()))
+        .setHeight(new SubtractiveConstraint(new FillConstraint, (20).pixels()))
         .setChildOf(this.element)
 
         const ScrollBarContainer = new UIContainer()
@@ -113,6 +116,35 @@ export default class fileSelector {
         .setChildOf(ScrollContainer);
 
         this.Scroll.setVerticalScrollBarComponent(scrollbar);
+
+        //New file button
+
+        const newButton = new UIRoundedRectangle(3)
+        .setWidth(new SubtractiveConstraint((100).percent(), (10).pixels()))
+        .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
+        .setX(new CenterConstraint)
+        .setY((5).pixels(true))
+        .setColor(new Color(29/255, 33/255, 48/255, 1))
+        .onMouseClick((comp) => {
+            //Code to open new file menu
+        })
+        .setChildOf(this.element)
+
+        const newButtonTextContainer = new UIContainer()
+        .setX(new CenterConstraint)
+        .setY(new CenterConstraint)
+        .setWidth(new ChildBasedSizeConstraint)
+        .setHeight(((10).pixels()))
+        .setChildOf(newButton)
+
+        const newButtonText = new UIText("New")
+        .setX((0).pixels())
+        .setY((0).pixels())
+        .setWidth(new TextAspectConstraint)
+        .setHeight((100).percent())
+        .setChildOf(newButtonTextContainer)
+
+        this.updateFilePath()
     }
 
     createFileButton(text = "Example Text") {
@@ -123,7 +155,14 @@ export default class fileSelector {
         .setWidth((100).percent())
         .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
         .onMouseClick((comp) => {
-            //Code to open the editor tab
+            let path = Config.modulesFolder + "/" + this.text + "/" + text
+            if(this.guiHandler.elementExists(path)) {
+                this.guiHandler.unhideElement(path)
+            }
+            else {
+                this.guiHandler.addElement(new formatSelector(this.guiHandler, path), path)
+            }
+            this.element.hide()
         })
         .setChildOf(this.Scroll)
 

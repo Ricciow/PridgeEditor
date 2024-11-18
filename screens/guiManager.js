@@ -42,6 +42,8 @@ export default class guiManager {
             }
         }, true, false);
 
+        this.elements = {}
+
         this.window = this.Screen.init()
         this.bgColor = bgColor
         this.background = new UIBlock()
@@ -78,7 +80,25 @@ export default class guiManager {
      * Add an element to the gui system
      * @param {guiElement} element 
      */
-    addElement(element) {
+    addElement(element, name) {
+        this.elements[name] = element
         element.element.setChildOf(this.background)
+    }
+
+    /**
+     * unhides an element with a name
+     * @param {string} name 
+     */
+    unhideElement(name) {
+        this.elements[name]?.element?.unhide(true)
+    }
+
+    /**
+     * Returns true or false if the element exists
+     * @param {string} name 
+     * @returns {boolean}
+     */
+    elementExists(name) {
+        return this.elements[name] ? true : false
     }
 }
