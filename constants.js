@@ -1,0 +1,1 @@
+export const Color = Java.type("java.awt.Color");
