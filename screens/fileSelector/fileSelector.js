@@ -221,7 +221,23 @@ export default class fileSelector {
     }
 
     getDirectoryPaths() {
-        return new File(Config.modulesFolder + "/" + this.text).list()?.filter((text) => text.endsWith(".json"))
+        let path = Config.modulesFolder + "/" + this.text
+        return new File(path).list()?.filter((text) => {
+            if(text.endsWith(".json")) {
+                try {
+                    let data = JSON.parse(FileLib.read(path + "/" + text))
+                    let keys = Object.keys(data)
+                    if(keys.includes("formats") && keys.includes("version")) {
+                        return true
+                    }
+                }
+                catch (error) {
+                    console.error(error)
+                    return false
+                }
+            }
+            return false
+        })
     }
 
     updateFilePath() {
