@@ -89,7 +89,7 @@ export default class formatSelector {
         .setX(new CenterConstraint)
         .setY(new AdditiveConstraint(new SiblingConstraint, (5).pixels()))
         .setWidth(new SubtractiveConstraint((100).percent(), (10).pixels()))
-        .setHeight(new SubtractiveConstraint(new FillConstraint, (20).pixels()))
+        .setHeight(new SubtractiveConstraint(new FillConstraint, (5).pixels()))
         .setChildOf(this.element)
 
         const ScrollBarContainer = new UIContainer()
@@ -127,16 +127,50 @@ export default class formatSelector {
 
         //New format button
 
-        const newButton = new UIRoundedRectangle(3)
-        .setWidth(new SubtractiveConstraint((100).percent(), (10).pixels()))
-        .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
+        
+        const bottomContainer = new UIContainer()
+        .setWidth((100).percent())
+        .setHeight(new ChildBasedSizeConstraint)
         .setX(new CenterConstraint)
-        .setY((5).pixels(true))
+        .setY((0).pixels(true))
+        .setColor(new Color(29/255, 33/255, 48/255, 1))
+        .setChildOf(this.element)
+
+        const saveButton = new UIRoundedRectangle(3)
+        .setWidth(new SubtractiveConstraint((50).percent(), (10).pixels()))
+        .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
+        .setX((5).pixels())
+        .setY(new CenterConstraint)
         .setColor(new Color(29/255, 33/255, 48/255, 1))
         .onMouseClick((comp) => {
-            
+            //Code to save file
         })
-        .setChildOf(this.element)
+        .setChildOf(bottomContainer)
+
+        const saveButtonTextContainer = new UIContainer()
+        .setX(new CenterConstraint)
+        .setY(new CenterConstraint)
+        .setWidth(new ChildBasedSizeConstraint)
+        .setHeight(((10).pixels()))
+        .setChildOf(saveButton)
+        
+        const saveButtonText = new UIText("Save")
+        .setX((0).pixels())
+        .setY((0).pixels())
+        .setWidth(new TextAspectConstraint)
+        .setHeight((100).percent())
+        .setChildOf(saveButtonTextContainer)
+
+        const newButton = new UIRoundedRectangle(3)
+        .setWidth(new SubtractiveConstraint((50).percent(), (10).pixels()))
+        .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
+        .setX((5).pixels(true))
+        .setY(new CenterConstraint)
+        .setColor(new Color(29/255, 33/255, 48/255, 1))
+        .onMouseClick((comp) => {
+            //Code to create new format
+        })
+        .setChildOf(bottomContainer)
 
         const newButtonTextContainer = new UIContainer()
         .setX(new CenterConstraint)

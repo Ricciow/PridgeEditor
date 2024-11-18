@@ -158,14 +158,14 @@ export default class fileSelector {
         .setY(new AdditiveConstraint(new SiblingConstraint, (2).pixels()))
         .setColor(new Color(41 / 255, 47 / 255, 69 / 255))
         .setWidth((100).percent())
-        .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
+        .setHeight((20).pixels())
         .setChildOf(this.Scroll)
         
         const fileButtonTextContainer = new UIContainer()
         .setX((5).pixels())
         .setY(new CenterConstraint)
         .setWidth(new SubtractiveConstraint((100).percent(), (31).pixels()))
-        .setHeight(((10).pixels()))
+        .setHeight(((20).pixels()))
         .onMouseClick((comp) => {
             let path = Config.modulesFolder + "/" + this.text + "/" + text
             if(this.guiHandler.elementExists(path)) {
@@ -180,9 +180,9 @@ export default class fileSelector {
 
         const fileButtonText = new UIText(text)
         .setX((0).pixels())
-        .setY((0).pixels())
+        .setY((5).pixels())
         .setWidth(new TextAspectConstraint)
-        .setHeight((100).percent())
+        .setHeight((50).percent())
         .setChildOf(fileButtonTextContainer)
 
         this.fileButtons.push(fileButton)
