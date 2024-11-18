@@ -101,4 +101,24 @@ export default class guiManager {
     elementExists(name) {
         return this.elements[name] ? true : false
     }
+
+    /**
+     * Deletes an element
+     * @param {string} name 
+     */
+    deleteElement(name) {
+        if(Object.keys(this.elements).includes(name)) {
+            this.elements[name].element.getParent().removeChild(this.elements[name].element)
+            delete this.elements[name]
+        }
+    }
+
+    /**
+     * 
+     * @param {string} name 
+     * @returns The object of the class containing the element
+     */
+    getElement(name) {
+        return this.elements[name]
+    }
 }

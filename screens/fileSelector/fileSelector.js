@@ -23,10 +23,14 @@ import {
     ScrollComponent,
     UIContainer,
     UIWrappedText,
-    TextAspectConstraint
+    TextAspectConstraint,
+    UIImage,
+    AspectConstraint
 } from "../../../Elementa";
 import { Color } from "../../constants";
 import formatSelector from "../formatEditor/formatSelector";
+import newFile from "./newFile";
+import { imageFromName } from "../../functions";
 
 const File = Java.type("java.io.File")
 
@@ -126,7 +130,8 @@ export default class fileSelector {
         .setY((5).pixels(true))
         .setColor(new Color(29/255, 33/255, 48/255, 1))
         .onMouseClick((comp) => {
-            //Code to open new file menu
+            this.guiHandler.addElement(new newFile(this.guiHandler, Config.modulesFolder + "/" + this.text + "/"), "newFile")
+            this.element.hide()
         })
         .setChildOf(this.element)
 
@@ -154,6 +159,13 @@ export default class fileSelector {
         .setColor(new Color(41 / 255, 47 / 255, 69 / 255))
         .setWidth((100).percent())
         .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
+        .setChildOf(this.Scroll)
+        
+        const fileButtonTextContainer = new UIContainer()
+        .setX((5).pixels())
+        .setY(new CenterConstraint)
+        .setWidth(new SubtractiveConstraint((100).percent(), (31).pixels()))
+        .setHeight(((10).pixels()))
         .onMouseClick((comp) => {
             let path = Config.modulesFolder + "/" + this.text + "/" + text
             if(this.guiHandler.elementExists(path)) {
@@ -164,13 +176,6 @@ export default class fileSelector {
             }
             this.element.hide()
         })
-        .setChildOf(this.Scroll)
-
-        const fileButtonTextContainer = new UIContainer()
-        .setX(new CenterConstraint)
-        .setY(new CenterConstraint)
-        .setWidth(new SubtractiveConstraint((100).percent(), (10).pixels()))
-        .setHeight(((10).pixels()))
         .setChildOf(fileButton)
 
         const fileButtonText = new UIText(text)
@@ -181,6 +186,19 @@ export default class fileSelector {
         .setChildOf(fileButtonTextContainer)
 
         this.fileButtons.push(fileButton)
+
+        const deleteFileButton = new UIImage.ofFile(imageFromName("buttonImages/closeButton.png"))
+        .setX((5).pixels(true))
+        .setY(new CenterConstraint)
+        .setWidth(new AspectConstraint(1))
+        .setHeight((16).pixels())
+        .onMouseClick((comp) => {
+            //Delete button clicked
+            let path = Config.modulesFolder + "/" + this.text + "/" + text
+            FileLib.delete(path)
+            this.updateFilePath()
+        })
+        .setChildOf(fileButton)
     }
 
     createFileButtons() {
