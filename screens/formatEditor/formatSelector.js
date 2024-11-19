@@ -29,14 +29,22 @@ import {
 } from "../../../Elementa";
 import { Color } from "../../constants";
 import { imageFromName } from "../../functions";
+import baseEditor from "./Editors/baseEditor";
+import regexEditor from "./Editors/regexEditor";
+import specialEditor from "./Editors/specialEditor";
+import stringarrayEditor from "./Editors/stringarrayEditor";
+import stringEditor from "./Editors/stringEditor";
 
 export default class formatSelector {
     constructor(guiHandler, path) {
 
+        let data = JSON.parse(FileLib.read(path))
+
+        this.path = path
         this.guiHandler = guiHandler
-        this.version = "0.1.0"
+        this.version = data.version
         this.formatButtons = []
-        this.formats = []
+        this.formats = data.formats
 
         //Make top area
         this.element = new UIRoundedRectangle(5)
@@ -72,13 +80,21 @@ export default class formatSelector {
             this.guiHandler.unhideElement("fileSelector")
         })
 
-        this.versionSelector = new UITextInput("0.1.0")
+        this.versionSelector = new UITextInput(this.version)
         .setX(new AdditiveConstraint(new SiblingConstraint, (10).pixels()))
         .setY(new CenterConstraint)
         .setWidth(new FillConstraint)
         .setHeight((10).pixels())
         .onMouseClick((comp) => {
             this.versionSelector.grabWindowFocus();
+        })
+        .onFocusLost(comp => {
+            this.updateVersion()
+        })
+        .onKeyType((input, char, keycode) => {
+            if(char.charCodeAt(0) == 13) { //if Enter pressed
+                this.updateVersion()
+            }
         })
         .setChildOf(topContainer)
 
@@ -125,9 +141,7 @@ export default class formatSelector {
 
         this.Scroll.setVerticalScrollBarComponent(scrollbar);
 
-        //New format button
-
-        
+        //Save formating button
         const bottomContainer = new UIContainer()
         .setWidth((100).percent())
         .setHeight(new ChildBasedSizeConstraint)
@@ -137,13 +151,29 @@ export default class formatSelector {
         .setChildOf(this.element)
 
         const saveButton = new UIRoundedRectangle(3)
-        .setWidth(new SubtractiveConstraint((50).percent(), (10).pixels()))
+        .setWidth(new SubtractiveConstraint((50).percent(), (7.5).pixels()))
         .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
         .setX((5).pixels())
         .setY(new CenterConstraint)
         .setColor(new Color(29/255, 33/255, 48/255, 1))
         .onMouseClick((comp) => {
-            //Code to save file
+            this.saveFile()
+            animate(comp, (animation) => {
+                animation.setColorAnimation(
+                    Animations.OUT_EXP,
+                    0.1,
+                    new ConstantColorConstraint(Color.BLACK)
+                )
+            });
+        })
+        .onMouseRelease((comp) => {
+            animate(comp, (animation) => {
+                animation.setColorAnimation(
+                    Animations.OUT_EXP,
+                    0.1,
+                    new ConstantColorConstraint(new Color(29/255, 33/255, 48/255, 1))
+                )
+            });
         })
         .setChildOf(bottomContainer)
 
@@ -161,14 +191,15 @@ export default class formatSelector {
         .setHeight((100).percent())
         .setChildOf(saveButtonTextContainer)
 
+        //New format button
         const newButton = new UIRoundedRectangle(3)
-        .setWidth(new SubtractiveConstraint((50).percent(), (10).pixels()))
+        .setWidth(new SubtractiveConstraint((50).percent(), (7.5).pixels()))
         .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
         .setX((5).pixels(true))
         .setY(new CenterConstraint)
         .setColor(new Color(29/255, 33/255, 48/255, 1))
         .onMouseClick((comp) => {
-            //Code to create new format
+            // Code to create new format
         })
         .setChildOf(bottomContainer)
 
@@ -185,9 +216,11 @@ export default class formatSelector {
         .setWidth(new TextAspectConstraint)
         .setHeight((100).percent())
         .setChildOf(newButtonTextContainer)
+
+        this.updateFormatButtons()
     }
 
-    createFormatButton(text = "Example Text") {
+    createFormatButton(text = "Example Text", type = "string", index) {
         const formatButton = new UIRoundedRectangle(4)
         .setX((0).pixels())
         .setY(new AdditiveConstraint(new SiblingConstraint, (2).pixels()))
@@ -195,14 +228,29 @@ export default class formatSelector {
         .setWidth((100).percent())
         .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
         .onMouseClick((comp) => {
-            //Code to open the editor tab
+            this.openFormatEditor(index)
         })
         .setChildOf(this.Scroll)
 
-        const formatButtonTextContainer = new UIContainer()
-        .setX(new CenterConstraint)
+        const typeBox = new UIRoundedRectangle(5)
+        .setX(new AdditiveConstraint(new SiblingConstraint, (2).pixels()))
         .setY(new CenterConstraint)
-        .setWidth(new SubtractiveConstraint((100).percent(), (10).pixels()))
+        .setWidth(new AdditiveConstraint(new ChildBasedSizeConstraint, (4).pixels()))
+        .setHeight((14).pixels())
+        .setColor(new Color(50/255, 96/255, 171/255, 1))
+        .setChildOf(formatButton)
+
+        const typeText = new UIText(type)
+        .setX((2).pixels())
+        .setY((2).pixels())
+        .setWidth(new TextAspectConstraint)
+        .setHeight(new SubtractiveConstraint((100).percent(), (4).pixels()))
+        .setChildOf(typeBox)
+
+        const formatButtonTextContainer = new UIContainer()
+        .setX(new AdditiveConstraint(new SiblingConstraint, (4).pixels()))
+        .setY(new CenterConstraint)
+        .setWidth(new SubtractiveConstraint((100).percent(), (90).pixels()))
         .setHeight(((10).pixels()))
         .setChildOf(formatButton)
 
@@ -216,8 +264,31 @@ export default class formatSelector {
         this.formatButtons.push(formatButton)
     }
 
+    openFormatEditor(index) {
+        let format = this.formats[index]
+        let editor
+        switch (format.type) {
+            case "string":
+                editor = stringEditor
+                break
+            case "stringarray":
+                editor = stringarrayEditor
+                break
+            case "regex":
+                editor = regexEditor
+                break
+            case "special":
+                editor = specialEditor
+                break
+            default:
+                editor = stringEditor
+        }
+        this.guiHandler.addElement(new editor(this.guiHandler, this.path, format, index), "editor")
+        this.element.hide()
+    }
+
     createFormatButtons() {
-        this.formats.forEach((formatname) => this.createFormatButton(formatname))
+        this.formats.forEach((format, index) => this.createFormatButton(format.trigger, format.type, index))
     }
 
     deleteFormatButtons() {
@@ -225,24 +296,30 @@ export default class formatSelector {
         this.formatButtons = []
     }
 
-    updateText() {
-        let text = this.pathSelector.getText()
-        if(text == "") {
-            this.text = "Pridge/customFormating"
-        }
-        else {
-            this.text = text
+    updateVersion() {
+        let version = this.versionSelector.getText()
+        if(version != "") {
+            if(/^\d+\.\d+\.\d+$/.test(version)) {
+                this.version = version
+            }
         }
     }
 
-    getDirectoryPaths() {
-        return new Format(Config.modulesFolder + "/" + this.text).list()?.filter((text) => text.endsWith(".json"))
-    }
-
-    updateFormatPath() {
-        this.updateText()
-        this.formats = this.getDirectoryPaths()
+    updateFormatButtons() {
+        this.updateVersion()
         this.deleteFormatButtons()
         this.createFormatButtons()
+    }
+
+    saveFile() {
+        let json = {
+            version : this.version,
+            formats : this.formats
+        }
+        FileLib.write(this.path, JSON.stringify(json, null, 4))
+    }
+
+    updateFormat(data, index) {
+        this.formats[index] = data
     }
 }
