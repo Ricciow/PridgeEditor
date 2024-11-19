@@ -161,6 +161,7 @@ export default class baseEditor {
     }
 
     saveFormat() {
+        this.updateFormatTest()
         let formatSelector = this.guiHandler.getElement(this.path)
         formatSelector.updateFormat(this.format, this.index)
         formatSelector.updateFormatButtons()

@@ -66,10 +66,10 @@ export default class stringEditor extends baseEditor {
         .setWidth(new SubtractiveConstraint((100).percent(), (6).pixels()))
         .setHeight((10).pixels())
         .onFocusLost(comp => {
-            this.updateFormat()
+            this.updateFormatTest()
         })
         .onKeyType((input, char, keycode) => {
-            this.updateFormat()
+            this.updateFormatTest()
         })
         .setChildOf(triggerBackground)
 
@@ -97,19 +97,19 @@ export default class stringEditor extends baseEditor {
         .setWidth(new SubtractiveConstraint((100).percent(), (6).pixels()))
         .setHeight((10).pixels())
         .onFocusLost(comp => {
-            this.updateFormat()
+            this.updateFormatTest()
         })
         .onKeyType((input, char, keycode) => {
-            this.updateFormat()
+            this.updateFormatTest()
         })
         .setChildOf(finalFormatBackground)
 
         setTimeout(() => {
-            this.updateFormat()
+            this.updateFormatTest()
         }, 50); 
     }
 
-    updateFormat() {
+    updateFormatTest() {
         let trigger = this.triggerTextInput.getText()
         if(trigger != "") {
             this.format.trigger = trigger
@@ -126,7 +126,7 @@ export default class stringEditor extends baseEditor {
             this.finalFormatTextInput.setText(this.format.finalFormat)
         }
 
-        this.updateFormatTest()
+        super.updateFormatTest()
     }
 
     formatTest(str) {
