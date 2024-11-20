@@ -23,3 +23,8 @@ export const baseFormats = {
         functionName: ""
     }
 }
+
+export const blankFormating = {
+    version: "0.0.1",
+    formats: []
+}

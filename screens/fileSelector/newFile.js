@@ -28,9 +28,10 @@ import {
     AspectConstraint
 } from "../../../Elementa";
 
-import { Color } from "../../constants";
+import { blankFormating, Color } from "../../constants";
 import { imageFromName } from "../../functions";
 import { jsonLink } from "../../../Pridge/constants"
+import checkboxWidget from "./checkboxWidget";
 
 export default class newFile {
     constructor(guiHandler, directory) {
@@ -40,7 +41,7 @@ export default class newFile {
         
         this.element = new UIRoundedRectangle(5)
         .setWidth((30).percent())
-        .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (20).pixels()))
+        .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (25).pixels()))
         .setX(new CenterConstraint)
         .setY(new CenterConstraint)
         .setColor(new Color(0, 9/255, 38/255, 1))
@@ -79,13 +80,15 @@ export default class newFile {
 
         this.nameInput.setChildOf(nameBox)
 
+        this.presetCheckbox = new checkboxWidget(new CenterConstraint, new AdditiveConstraint(new SiblingConstraint, ((5).pixels())), new SubtractiveConstraint((100).percent(), (10).pixels()), (20).pixels(), this.element)
+
         //Create file button
 
         const newButton = new UIRoundedRectangle(3)
         .setWidth(new SubtractiveConstraint((100).percent(), (10).pixels()))
         .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
         .setX(new CenterConstraint)
-        .setY((5).pixels(true))
+        .setY(new AdditiveConstraint(new SiblingConstraint, ((5).pixels())))
         .setColor(new Color(29/255, 33/255, 48/255, 1))
         .onMouseClick((comp) => {
             this.createFile()
@@ -121,7 +124,10 @@ export default class newFile {
         }
         else {
             try {
-                const data = FileLib.getUrlContent(jsonLink)
+                let data = JSON.stringify(blankFormating, null, 4)
+                if(this.presetCheckbox.getState()) {
+                    data = FileLib.getUrlContent(jsonLink)
+                }
                 FileLib.write(this.directory+filename+".json", data)
             }
             catch(error) {
