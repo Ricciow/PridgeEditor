@@ -29,8 +29,7 @@ import {
 } from "../../../Elementa";
 import { Color } from "../../constants";
 import { imageFromName } from "../../functions";
-import baseEditor from "./Editors/baseEditor";
-import regexEditor from "./Editors/regexEditor";
+import regexEditor from "./Editors/regexEditor/regexEditor";
 import specialEditor from "./Editors/specialEditor";
 import stringarrayEditor from "./Editors/stringarrayEditor";
 import stringEditor from "./Editors/stringEditor";

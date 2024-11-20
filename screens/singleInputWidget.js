@@ -28,7 +28,7 @@ import {
     TextAspectConstraint
 } from "../../Elementa";
 import { imageFromName } from "../functions"; 
-const Color = Java.type("java.awt.Color");
+import { Color } from "../constants";
 
 export default class SingleInputWidget {
     constructor(parent, values = []) {
@@ -145,7 +145,7 @@ export default class SingleInputWidget {
         return this;
     }
     
-    _createButtons = () => {
+    _createButtons() {
         this.ButtonBox = new UIContainer()
         .setX(new CenterConstraint())
         .setY(new AdditiveConstraint(new SiblingConstraint(), (2).pixels()))

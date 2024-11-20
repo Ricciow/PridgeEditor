@@ -29,6 +29,7 @@ import {
 } from "../../../../Elementa";
 import { Color } from "../../../constants";
 import { imageFromName, UIVanillaText } from "../../../functions";
+import settings from "../../../../Pridge/settings";
 
 export default class baseEditor {
     constructor(guiHandler, path, format, index) {
@@ -123,9 +124,9 @@ export default class baseEditor {
         .setChildOf(testBox)
 
         const testTextContainer = new UIContainer()
-        .setX(new CenterConstraint)
+        .setX((3).pixels())
         .setY(new CenterConstraint)
-        .setWidth(new SubtractiveConstraint((100).percent(), (6).pixels()))
+        .setWidth(new SubtractiveConstraint((100).percent(), (27).pixels()))
         .setHeight(((10).pixels()))
         .setChildOf(testTextBox)
 
@@ -136,7 +137,21 @@ export default class baseEditor {
         .setHeight((100).percent())
         .setChildOf(testTextContainer)
 
+        const sendButton = new UIImage.ofFile(imageFromName("buttonImages/sendButton.png"))
+        .setX((5).pixels(true))
+        .setY(new CenterConstraint)
+        .setWidth(new AspectConstraint(1))
+        .setHeight((12).pixels())
+        .onMouseClick((comp) => {
+            this.sendPridgeMessage(this.formatTest(this.testText))
+        })
+        .setChildOf(testTextBox)
+
         this.updateFormatTest()
+    }
+
+    sendPridgeMessage(message) {
+        ChatLib.chat(`${settings.newName} ${settings.botName} &f${message}`)
     }
 
     updateFormatTest() {

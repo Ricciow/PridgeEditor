@@ -28,7 +28,7 @@ import {
     AspectConstraint
 } from "../../../../Elementa";
 import { Color } from "../../../constants";
-import SingleInputWidget from "../../singleInputWindow";
+import SingleInputWidget from "../../singleInputWidget";
 import baseEditor from "./baseEditor";
 
 export default class stringarrayEditor extends baseEditor {
