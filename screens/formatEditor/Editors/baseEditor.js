@@ -41,7 +41,7 @@ export default class baseEditor {
 
         this.element = new UIRoundedRectangle(5)
         .setWidth((60).percent())
-        .setHeight((60).percent())
+        .setHeight((80).percent())
         .setX(new CenterConstraint)
         .setY(new CenterConstraint)
         .setColor(new Color(0, 9/255, 38/255, 1))

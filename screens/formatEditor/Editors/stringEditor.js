@@ -118,12 +118,12 @@ export default class stringEditor extends baseEditor {
             this.triggerTextInput.setText(this.format.trigger)
         }
 
-        let finalFormat = this.finalFormatTextInput.getText()
+        let finalFormat = this.finalFormatTextInput.getText().replace(/\\n/g, "\n")
         if(finalFormat != "") {
             this.format.finalFormat = finalFormat
         }
         else {
-            this.finalFormatTextInput.setText(this.format.finalFormat)
+            this.finalFormatTextInput.setText(this.format.finalFormat.replace(/\n/g, "\\n"))
         }
 
         super.updateFormatTest()
