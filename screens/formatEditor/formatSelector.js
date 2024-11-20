@@ -33,6 +33,7 @@ import regexEditor from "./Editors/regexEditor/regexEditor";
 import specialEditor from "./Editors/specialEditor";
 import stringarrayEditor from "./Editors/stringarrayEditor";
 import stringEditor from "./Editors/stringEditor";
+import newFormat from "./newFormat";
 
 export default class formatSelector {
     constructor(guiHandler, path) {
@@ -198,7 +199,8 @@ export default class formatSelector {
         .setY(new CenterConstraint)
         .setColor(new Color(29/255, 33/255, 48/255, 1))
         .onMouseClick((comp) => {
-            // Code to create new format
+            this.guiHandler.addElement(new newFormat(this.guiHandler, this.path), "newFormat")
+            this.element.hide()
         })
         .setChildOf(bottomContainer)
 
@@ -320,5 +322,9 @@ export default class formatSelector {
 
     updateFormat(data, index) {
         this.formats[index] = data
+    }
+
+    createFormat(data) {
+        this.formats.push(data)
     }
 }
