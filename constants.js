@@ -7,7 +7,7 @@ export const baseFormats = {
         finalFormat: ""
     },
     stringarray: {
-        type: "stringArray",
+        type: "stringarray",
         trigger: [],
         finalFormat: ""
     },

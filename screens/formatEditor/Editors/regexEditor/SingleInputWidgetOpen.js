@@ -73,8 +73,8 @@ export default class SingleInputWidgetOpen extends SingleInputWidget {
         })
         .onKeyType((comp, char, keycode) => {
             let text = TextInput.getText()
-            if(!/^[1-9]+$/.test(text)) {
-                TextInput.setText(text.replace(/[^1-9]/g, ""))
+            if(!/^[0-9]+$/.test(text)) {
+                TextInput.setText(text.replace(/[^0-9]/g, ""))
             }
             try {
                 this.listener()
