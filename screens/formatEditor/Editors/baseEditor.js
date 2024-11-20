@@ -54,7 +54,7 @@ export default class baseEditor {
         .setY((5).pixels())
         .setColor(new Color(29/255, 33/255, 48/255, 1))
         .setWidth(new SubtractiveConstraint((100).percent(), (10).pixels()))
-        .setHeight(new ChildBasedSizeConstraint)
+        .setHeight((26).pixels())
         .setChildOf(this.element)
 
         const closeButton = new UIImage.ofFile(imageFromName("buttonImages/returnButton.png"))
@@ -63,9 +63,29 @@ export default class baseEditor {
         .setWidth(new AspectConstraint(1))
         .setHeight((16).pixels())
         .onMouseClick((comp) => {
+            this.saveFormat()
             this.close()
         })
         .setChildOf(topContainer)
+
+        const deleteBox = new UIRoundedRectangle(5)
+        .setX(new CenterConstraint)
+        .setY(new CenterConstraint)
+        .setWidth(new AdditiveConstraint(new ChildBasedSizeConstraint, (4).pixels()))
+        .setHeight((16).pixels())
+        .setColor(new Color(189/255, 47/255, 47/255, 1))
+        .onMouseClick((comp) => {
+            this.deleteFormat()
+            this.close()
+        })
+        .setChildOf(topContainer)
+
+        const deleteText = new UIText("Delete")
+        .setX((2).pixels())
+        .setY((2).pixels())
+        .setWidth(new TextAspectConstraint)
+        .setHeight(new SubtractiveConstraint((100).percent(), (4).pixels()))
+        .setChildOf(deleteBox)
 
         const typeBox = new UIRoundedRectangle(5)
         .setX((5).pixels(true))
@@ -170,9 +190,14 @@ export default class baseEditor {
     }
 
     close() {
-        this.saveFormat()
         this.guiHandler.unhideElement(this.path)
         this.guiHandler.deleteElement("editor")
+    }
+
+    deleteFormat() {
+        let formatSelector = this.guiHandler.getElement(this.path)
+        formatSelector.deleteFormat(this.index)
+        formatSelector.updateFormatButtons()
     }
 
     saveFormat() {

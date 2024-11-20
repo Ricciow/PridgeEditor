@@ -107,16 +107,16 @@ export default class specialEditor extends baseEditor {
         .setChildOf(functionNameBackground)
 
         setTimeout(() => {
-            this.updateFormatTest()
+            this.updateFormatTest(true)
         }, 50); 
     }
 
-    updateFormatTest() {
+    updateFormatTest(load = false) {
         let trigger = this.triggerTextInput.getText()
         if(trigger != "") {
             this.format.trigger = trigger
         }
-        else {
+        else if(load) {
             this.triggerTextInput.setText(this.format.trigger)
         }
 
@@ -124,7 +124,7 @@ export default class specialEditor extends baseEditor {
         if(functionName!= "") {
             this.format.functionName = functionName
         }
-        else {
+        else if(load) {
             this.functionNameTextInput.setText(this.format.functionName)
         }
 

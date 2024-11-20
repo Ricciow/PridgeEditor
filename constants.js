@@ -18,7 +18,7 @@ export const baseFormats = {
         groupFormating: {}
     },
     special : {
-        type: "string",
+        type: "special",
         trigger: "",
         functionName: ""
     }

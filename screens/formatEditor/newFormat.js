@@ -160,7 +160,7 @@ export default class newFormat {
         .setHeight((100).percent())
         .setChildOf(regexButtonTextContainer)
 
-        const spcialButton = new UIRoundedRectangle(3)
+        const specialButton = new UIRoundedRectangle(3)
         .setWidth(new SubtractiveConstraint((50).percent(), (7.5).pixels()))
         .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
         .setX(new AdditiveConstraint(new SiblingConstraint, (5).pixels()))
@@ -171,19 +171,19 @@ export default class newFormat {
         })
         .setChildOf(bottomButtonsContainer)
 
-        const spcialButtonTextContainer = new UIContainer()
+        const specialButtonTextContainer = new UIContainer()
         .setX(new CenterConstraint)
         .setY(new CenterConstraint)
         .setWidth(new ChildBasedSizeConstraint)
         .setHeight(((10).pixels()))
-        .setChildOf(spcialButton)
+        .setChildOf(specialButton)
 
-        const spcialButtonText = new UIText("Special")
+        const specialButtonText = new UIText("Special")
         .setX((0).pixels())
         .setY((0).pixels())
         .setWidth(new TextAspectConstraint)
         .setHeight((100).percent())
-        .setChildOf(spcialButtonTextContainer)
+        .setChildOf(specialButtonTextContainer)
     }
 
     close() {

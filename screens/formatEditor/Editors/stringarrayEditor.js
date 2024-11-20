@@ -97,18 +97,18 @@ export default class stringarrayEditor extends baseEditor {
         })
 
         setTimeout(() => {
-            this.updateFormatTest()
+            this.updateFormatTest(true)
         }, 50); 
     }
 
-    updateFormatTest() {
+    updateFormatTest(load = false) {
         this.format.trigger = this.triggerInputs.getInputs()
 
         let finalFormat = this.finalFormatTextInput.getText().replace(/\\n/g, "\n")
         if(finalFormat != "") {
             this.format.finalFormat = finalFormat
         }
-        else {
+        else if(load) {
             this.finalFormatTextInput.setText(this.format.finalFormat.replace(/\n/g, "\\n"))
         }
 

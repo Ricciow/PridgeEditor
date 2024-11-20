@@ -105,16 +105,16 @@ export default class stringEditor extends baseEditor {
         .setChildOf(finalFormatBackground)
 
         setTimeout(() => {
-            this.updateFormatTest()
+            this.updateFormatTest(true)
         }, 50); 
     }
 
-    updateFormatTest() {
+    updateFormatTest(load = false) {
         let trigger = this.triggerTextInput.getText()
         if(trigger != "") {
             this.format.trigger = trigger
         }
-        else {
+        else if(load) {
             this.triggerTextInput.setText(this.format.trigger)
         }
 
@@ -122,7 +122,7 @@ export default class stringEditor extends baseEditor {
         if(finalFormat != "") {
             this.format.finalFormat = finalFormat
         }
-        else {
+        else if(load) {
             this.finalFormatTextInput.setText(this.format.finalFormat.replace(/\n/g, "\\n"))
         }
 

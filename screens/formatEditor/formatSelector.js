@@ -320,6 +320,10 @@ export default class formatSelector {
         FileLib.write(this.path, JSON.stringify(json, null, 4))
     }
 
+    deleteFormat(index) {
+        delete this.formats[index]
+    }
+
     updateFormat(data, index) {
         this.formats[index] = data
     }
