@@ -45,6 +45,8 @@ export default class formatSelector {
         this.version = data.version
         this.formatButtons = []
         this.formats = data.formats
+        this.focusedIndex = -1
+        this.moveCooldown = false
 
         //Make top area
         this.element = new UIRoundedRectangle(5)
@@ -66,7 +68,7 @@ export default class formatSelector {
         .setX(new CenterConstraint)
         .setY(new CenterConstraint)
         .setWidth((90).percent())
-        .setHeight((10).pixels())
+        .setHeight((16).pixels())
         .setChildOf(topBox)
 
         const returnButton = new UIImage.ofFile(imageFromName("buttonImages/returnButton.png"))
@@ -105,7 +107,7 @@ export default class formatSelector {
         .setX(new CenterConstraint)
         .setY(new AdditiveConstraint(new SiblingConstraint, (5).pixels()))
         .setWidth(new SubtractiveConstraint((100).percent(), (10).pixels()))
-        .setHeight(new SubtractiveConstraint(new FillConstraint, (5).pixels()))
+        .setHeight(new SubtractiveConstraint(new FillConstraint, (20).pixels()))
         .setChildOf(this.element)
 
         const ScrollBarContainer = new UIContainer()
@@ -144,9 +146,9 @@ export default class formatSelector {
         //Save formating button
         const bottomContainer = new UIContainer()
         .setWidth((100).percent())
-        .setHeight(new ChildBasedSizeConstraint)
+        .setHeight((20).pixels())
         .setX(new CenterConstraint)
-        .setY((0).pixels(true))
+        .setY((5).pixels(true))
         .setColor(new Color(29/255, 33/255, 48/255, 1))
         .setChildOf(this.element)
 
@@ -222,16 +224,80 @@ export default class formatSelector {
     }
 
     createFormatButton(text = "Example Text", type = "string", index) {
+        
         const formatButton = new UIRoundedRectangle(4)
         .setX((0).pixels())
         .setY(new AdditiveConstraint(new SiblingConstraint, (2).pixels()))
         .setColor(new Color(41 / 255, 47 / 255, 69 / 255))
         .setWidth((100).percent())
-        .setHeight(new AdditiveConstraint(new ChildBasedSizeConstraint, (10).pixels()))
+        .setHeight((50).pixels())
+        .setChildOf(this.Scroll)
+
+        const upDownContainer = new UIContainer()
+        .setWidth((16).pixels())
+        .setHeight((46).pixels())
+        .setX((2).pixels())
+        .setY((2).pixels())
+        .setChildOf(formatButton)
+
+        const hiderContainer = new UIContainer()
+        .setWidth((100).percent())
+        .setHeight((100).percent())
+        .setX((0).pixels())
+        .setY((0).pixels())
+        .setChildOf(upDownContainer)
+
+        upDownContainer.onMouseClick((comp) => {
+            hiderContainer.grabWindowFocus()
+            this.focusedIndex = index
+        })
+
+        hiderContainer.onFocusLost((comp) => {
+            this.focusedIndex = -1
+            hiderContainer.hide()
+        })
+        .onFocus((comp) => {
+            hiderContainer.unhide(true)
+        })
+        .onKeyType((comp, char, keycode) => {
+            if(keycode == 200 || keycode == 17) {
+                this.moveFormatUp(index)
+            }
+            else if(keycode == 208 || keycode == 31) {
+                this.moveFormatDown(index)
+            }
+        })
+        .hide()
+
+        const upArrow = new UIImage.ofFile(imageFromName("buttonImages/upArrow.png"))
+        .setWidth((100).percent())
+        .setHeight(new AspectConstraint(1))
+        .setX(new CenterConstraint)
+        .setY((0).pixels())
+        .onMouseClick((comp) => {
+            this.moveFormatUp(index)
+        })
+        .setChildOf(hiderContainer)
+
+        const downArrow = new UIImage.ofFile(imageFromName("buttonImages/downArrow.png"))
+        .setWidth((100).percent())
+        .setHeight(new AspectConstraint(1))
+        .setX(new CenterConstraint)
+        .setY((0).pixels(true))
+        .onMouseClick((comp) => {
+            this.moveFormatDown(index)
+        })
+        .setChildOf(hiderContainer)
+
+        const formatContainer = new UIContainer()
+        .setWidth(new SubtractiveConstraint((100).percent(), (20).pixels()))
+        .setHeight((100).percent())
+        .setX(new SiblingConstraint)
+        .setY(new CenterConstraint)
         .onMouseClick((comp) => {
             this.openFormatEditor(index)
         })
-        .setChildOf(this.Scroll)
+        .setChildOf(formatButton)
 
         const typeBox = new UIRoundedRectangle(5)
         .setX(new AdditiveConstraint(new SiblingConstraint, (2).pixels()))
@@ -239,7 +305,7 @@ export default class formatSelector {
         .setWidth(new AdditiveConstraint(new ChildBasedSizeConstraint, (4).pixels()))
         .setHeight((14).pixels())
         .setColor(new Color(50/255, 96/255, 171/255, 1))
-        .setChildOf(formatButton)
+        .setChildOf(formatContainer)
 
         const typeText = new UIText(type)
         .setX((2).pixels())
@@ -253,7 +319,7 @@ export default class formatSelector {
         .setY(new CenterConstraint)
         .setWidth(new SubtractiveConstraint((100).percent(), (90).pixels()))
         .setHeight(((10).pixels()))
-        .setChildOf(formatButton)
+        .setChildOf(formatContainer)
 
         const formatButtonText = new UIText(text)
         .setX((0).pixels())
@@ -261,6 +327,12 @@ export default class formatSelector {
         .setWidth(new TextAspectConstraint)
         .setHeight((100).percent())
         .setChildOf(formatButtonTextContainer)
+
+        if(this.focusedIndex == index) {
+            setTimeout(() => {
+                hiderContainer.grabWindowFocus()    
+            }, 20);
+        }
 
         this.formatButtons.push(formatButton)
     }
@@ -330,5 +402,37 @@ export default class formatSelector {
 
     createFormat(data) {
         this.formats.push(data)
+    }
+
+    moveFormatUp(index) {
+        if(index != 0 && !this.moveCooldown) {
+            this.moveCooldown = true
+            let newIndex = index-1
+            let tempFormat = this.formats[newIndex]
+            this.formats[newIndex] = this.formats[index]
+            this.formats[index] = tempFormat
+            this.focusedIndex = newIndex
+            this.updateFormatButtons()
+            this.Scroll.scrollTo(0.0, this.Scroll.verticalOffset+52, true)
+            setTimeout(() => {
+                this.moveCooldown = false
+            }, 100);
+        }
+    }
+    
+    moveFormatDown(index) {
+        if(this.formats.length-1 != index && !this.moveCooldown) {
+            this.moveCooldown = true
+            let newIndex = index+1
+            let tempFormat = this.formats[newIndex]
+            this.formats[newIndex] = this.formats[index]
+            this.formats[index] = tempFormat
+            this.focusedIndex = newIndex
+            this.updateFormatButtons()
+            this.Scroll.scrollTo(0.0, this.Scroll.verticalOffset-52, true)
+            setTimeout(() => {
+                this.moveCooldown = false
+            }, 100);
+        }
     }
 }
